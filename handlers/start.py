@@ -14,6 +14,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     personal = PORTFOLIO_DATA["personal"]
     sender = update.effective_user
     admin_chat_id = os.getenv("ADMIN_CHAT_ID")
+    if admin_chat_id:
+        admin_chat_id = admin_chat_id.strip().strip('"').strip("'")
 
     sender_name = sender.full_name or "Anonymous"
     sender_username = f"@{sender.username}" if sender.username else "No username"

@@ -104,7 +104,8 @@ def main():
         run_dry_run_test()
         return
 
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    raw_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    token = raw_token.strip().strip('"').strip("'") if raw_token else None
     if not token or token == "your_telegram_bot_token_here":
         print("\n" + "=" * 65)
         print("⚠️  MISSING TELEGRAM_BOT_TOKEN in .env file!")

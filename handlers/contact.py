@@ -41,6 +41,8 @@ async def handle_incoming_message(update: Update, context: ContextTypes.DEFAULT_
     user_text = update.message.text
     sender = update.effective_user
     admin_chat_id = os.getenv("ADMIN_CHAT_ID")
+    if admin_chat_id:
+        admin_chat_id = admin_chat_id.strip().strip('"').strip("'")
 
     sender_name = sender.full_name or "Anonymous"
     sender_username = f"@{sender.username}" if sender.username else "No username"
