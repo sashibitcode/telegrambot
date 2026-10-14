@@ -2,6 +2,7 @@
 Start and Help command handlers.
 """
 
+import os
 from telegram import Update
 from telegram.ext import ContextTypes
 from data.portfolio_data import PORTFOLIO_DATA
@@ -9,9 +10,32 @@ from keyboards.menus import get_main_keyboard
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handles the /start command."""
+    """Handles the /start command and alerts admin of new visitors."""
     personal = PORTFOLIO_DATA["personal"]
-    
+    sender = update.effective_user
+    admin_chat_id = os.getenv("ADMIN_CHAT_ID")
+
+    sender_name = sender.full_name or "Anonymous"
+    sender_username = f"@{sender.username}" if sender.username else "No username"
+
+    # Send visitor alert to admin (if sender is not admin himself)
+    if admin_chat_id and str(sender.id) != str(admin_chat_id):
+        try:
+            alert_text = (
+                f"👁️ *New Visitor Alert!*\n\n"
+                f"Someone just opened your Portfolio Bot!\n"
+                f"👤 *Name:* {sender_name}\n"
+                f"🏷️ *Username:* {sender_username}\n"
+                f"🆔 *User ID:* `{sender.id}`"
+            )
+            await context.bot.send_message(
+                chat_id=admin_chat_id,
+                text=alert_text,
+                parse_mode="Markdown"
+            )
+        except Exception:
+            pass
+
     welcome_text = (
         f"👋 *Welcome to {personal['name']}'s Portfolio Bot!*\n\n"
         f"💼 *Role:* {personal['title']}\n"
@@ -32,6 +56,17 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         parse_mode="Markdown",
         reply_markup=get_main_keyboard()
     )
+
+
+async def myid_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Replies with the sender's Telegram chat ID to easily configure ADMIN_CHAT_ID."""
+    user = update.effective_user
+    text = (
+        f"🆔 *Your Telegram Chat ID:* `{user.id}`\n\n"
+        f"Copy this number and set it as `ADMIN_CHAT_ID={user.id}` in your `.env` file.\n"
+        f"Once set, whenever anyone visits your bot or sends a message, you will get an instant alert here!"
+    )
+    await update.message.reply_text(text, parse_mode="Markdown")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

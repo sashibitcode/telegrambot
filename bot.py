@@ -29,7 +29,7 @@ load_dotenv()
 
 # Internal handlers & keyboards
 from data.portfolio_data import PORTFOLIO_DATA
-from handlers.start import start_command, help_command
+from handlers.start import start_command, help_command, myid_command
 from handlers.about import about_handler
 from handlers.skills import skills_handler
 from handlers.projects import projects_handler
@@ -129,6 +129,7 @@ def main():
     # Command Handlers
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("myid", myid_command))
     app.add_handler(CommandHandler("about", about_handler))
     app.add_handler(CommandHandler("skills", skills_handler))
     app.add_handler(CommandHandler("projects", projects_handler))
